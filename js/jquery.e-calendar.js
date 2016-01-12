@@ -45,6 +45,13 @@
             var d = $(this).attr('data-event-day');
             $('div.c-event-item[data-event-day="' + d + '"]').removeClass('c-event-over');
         };
+        var mouseClickDayEv = function () {
+			//Animation: move scroll to the event
+			var d = $(this).attr('data-event-day');
+			$('html, body').animate({
+				scrollTop: $('div.c-event-item[data-event-day="' + d + '"]').offset().top
+			}, 1000);
+		};
         var mouseOverItem = function () {
             $(this).addClass('c-event-over');
             var d = $(this).attr('data-event-day');
@@ -55,6 +62,13 @@
             var d = $(this).attr('data-event-day');
             $('div.c-event[data-event-day="' + d + '"]').removeClass('c-event-over');
         };
+        var mouseClickEvIt = function () {
+			//Animation: move scroll to the event
+			var d = $(this).attr('data-event-day');
+			$('html, body').animate({
+				scrollTop: $('.calendar').offset().top
+			}, 1000);
+		};
         var nextMonth = function () {
             if (dMonth < 11) {
                 dMonth++;
@@ -91,17 +105,18 @@
             var dLastDayOfMonth = new Date(dYear, dMonth + 1, 0).getDate();
             var dLastDayOfPreviousMonth = new Date(dYear, dMonth + 1, 0).getDate() - dWeekDayOfMonthStart + 1;
 
-            var cBody = $('<div/>').addClass('c-grid');
+            var cBody = $('<div/>').addClass('c-grid trans5sEase');
             var cEvents = $('<div/>').addClass('c-event-grid');
             var cEventsBody = $('<div/>').addClass('c-event-body');
-            cEvents.append($('<div/>').addClass('c-event-title c-pad-top').html(settings.eventTitle));
+            var cEventsTitle = $('<div/>').addClass('c-event-title c-pad-top changeEvTitle');
+            cEvents.append(cEventsTitle.html(settings.eventTitle));
             cEvents.append(cEventsBody);
             var cNext = $('<div/>').addClass('c-next c-grid-title c-pad-top');
             var cMonth = $('<div/>').addClass('c-month c-grid-title c-pad-top');
             var cPrevious = $('<div/>').addClass('c-previous c-grid-title c-pad-top');
-            cPrevious.html(settings.textArrows.previous);
+            
             cMonth.html(settings.months[dMonth] + ' ' + dYear);
-            cNext.html(settings.textArrows.next);
+            
 
             cPrevious.on('mouseover', mouseOver).on('mouseleave', mouseLeave).on('click', previousMonth);
             cNext.on('mouseover', mouseOver).on('mouseleave', mouseLeave).on('click', nextMonth);
@@ -130,7 +145,7 @@
                         var d = settings.events[j].datetime;
                         if (d.getDate() == day && d.getMonth() == dMonth && d.getFullYear() == dYear) {
                             cDay.addClass('c-event').attr('data-event-day', d.getDate());
-                            cDay.on('mouseover', mouseOverEvent).on('mouseleave', mouseLeaveEvent);
+                            cDay.on('mouseover', mouseOverEvent).on('mouseleave', mouseLeaveEvent).on('click', mouseClickDayEv);
                         }
                     }
                     cDay.html(day++);
@@ -146,11 +161,23 @@
                 if (d.getMonth() == dMonth && d.getFullYear() == dYear) {
                     var date = lpad(d.getDate(), 2) + '/' + lpad(d.getMonth() + 1, 2) + ' ' + lpad(d.getHours(), 2) + ':' + lpad(d.getMinutes(), 2);
                     var item = $('<div/>').addClass('c-event-item');
-                    var title = $('<div/>').addClass('title').html(date + '  ' + settings.events[i].title + '<br/>');
-                    var description = $('<div/>').addClass('description').html(settings.events[i].description + '<br/>');
+                    /*Image src*/
+					var imgSrc = settings.events[i].imgSrc;
+					/*Image*/
+					var image = $('<img/>', {
+						'name' : 'img' + i,
+						'src' : imgSrc,
+						'class' : 'c-event-image ' + 'calPhoto',
+					}).html(settings.events[i]);
+                    var title = $('<h3/>').addClass('title').html(settings.events[i].title);
+                    var description = $('<h4/>').addClass('description').html(settings.events[i].description);
+                    /*Date*/
+					var fechaAc = $('<p/>').addClass('dateAc').html(date + '  ' + settings.events[i].fechaAc);
+					/*Conditions*/
+					var conditions = $('<p/>').addClass('conditions').html(settings.events[i].conditions);
                     item.attr('data-event-day', d.getDate());
-                    item.on('mouseover', mouseOverItem).on('mouseleave', mouseLeaveItem);
-                    item.append(title).append(description);
+                    item.on('mouseover', mouseOverItem).on('mouseleave', mouseLeaveItem).on('click', mouseClickEvIt);
+                    item.append(image).append(title).append(description).append(conditions).append(fechaAc);
                     eventList.append(item);
                 }
             }
@@ -176,9 +203,9 @@
         eventTitle: 'Eventos',
         url: '',
         events: [
-            {title: 'Evento de Abertura', description: 'Abertura das Olimpíadas Rio 2016', datetime: new Date(2016, new Date().getMonth(), 12, 17)},
-            {title: 'Tênis de Mesa', description: 'BRA x ARG - Semifinal', datetime: new Date(2016, new Date().getMonth(), 23, 16)},
-            {title: 'Ginástica Olímpica', description: 'Classificatórias de equipes', datetime: new Date(2016, new Date().getMonth(), 31, 16)}
+            {imgSrc: '../img/activityNull.jpg', title: 'Evento de Abertura', description: 'Abertura das Olimpíadas Rio 2016', conditions: 'Conditions...', datetime: new Date(2016, 0, 12, 17), fechaAc: 'am',},
+            {imgSrc: '../img/activityNull.jpg', title: 'Tênis de Mesa', description: 'BRA x ARG - Semifinal', conditions: 'Conditions...', datetime: new Date(2016, 0, 23, 16), fechaAc: 'pm',},
+            {imgSrc: '../img/activityNull.jpg', title: 'Ginástica Olímpica', description: 'Classificatórias de equipes', conditions: 'Conditions...', datetime: new Date(2016, 0, 31, 16), fechaAc: 'pm',}
         ]
     };
 
